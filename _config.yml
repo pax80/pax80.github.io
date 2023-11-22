@@ -1,8 +1,7 @@
 title: "M.P."
 #mailto: mirco.paccusse@gmail.com 
-author:
-  name: pax80
-  email: mirco.paccusse@gmail.com
+github_username: pax80
+email: mirco.paccusse@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   🚀 curious / nvim / otel / software engineering
 #baseurl: "" # the subpath of your site, e.g. /blog

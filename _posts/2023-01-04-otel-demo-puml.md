@@ -310,7 +310,7 @@ rectangle "<$nginx>" as nginx_app
 
 ![nginx example](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuUBYKipCIyufJKbLiCd9JyylrizBpyohiEDAJ2x9Br8eBKujuYfAJIv9p4lFILLGib61I2if91OhW9bSN20r2hgwTZ2-GsfU2j1e0000)
 
-![with Icons](otel.svg)
+![with Icons](https://github.com/pax80/pax80.github.io/blob/master/_img/otel.svg)
 
 ### layout tips
 
