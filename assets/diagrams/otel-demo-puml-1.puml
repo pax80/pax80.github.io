@@ -1,0 +1,82 @@
+@startuml
+rectangle "\nInternet" as internet
+
+rectangle "\nLoad Generator" as load_generator #3572A5;text:white
+rectangle "\nFront end" as frontend #E07114
+rectangle "\nFrontend Proxy (Envoy)" as frontend_proxy #ED2F6B;text:white
+
+' incoming traffic
+frontend_proxy -[#black]-> frontend
+internet -[#black]-> frontend_proxy
+load_generator -[#black]-> frontend
+
+together {
+    rectangle "\nAd service" as ad_service #9F5F15
+    rectangle "\nFraud Detection Service" as fraud_detection_service #420090;text:white
+    rectangle "\nAccounting SErvice" as accounting_service #139DCF
+    rectangle "\nCheckout Service" as checkout_service #139DCF
+}
+
+frontend =[#black]=> ad_service
+frontend =[#black]=> checkout_service
+
+' layer 3
+
+queue "\nKafka" as kafka #white;line:black
+
+fraud_detection_service .[#black].> kafka
+accounting_service .[#black].> kafka
+checkout_service .[#black].> kafka
+
+together {
+    rectangle "\nShipping Service" as shipping_service #D49471
+    rectangle "\nRecommendation Service" as recommendation_service #3572A5;text:white
+}
+
+frontend =[#black]==> shipping_service
+frontend =[#black]==> recommendation_service
+
+' break
+'
+rectangle "\nCart Service" as cart_service #178600;text:white
+
+frontend ==[#black]==> cart_service
+checkout_service ==[#black]===> cart_service
+
+together {
+    rectangle "\nCurrency Service" as currency_service #ED2F6B
+    rectangle "\nEmail Service" as email_service #5C0C11;text:white
+    rectangle "\nPayment Service" as payment_service #ECDC49;text:black
+}
+
+checkout_service ==[#black]=> currency_service
+checkout_service --[#black]-> email_service
+checkout_service =[#black]==> payment_service
+
+frontend ==[#black]=> currency_service
+
+rectangle "\nQuote Service" as quote_service #3E4983;text:white
+rectangle "\nProduct_catalog_service" as product_catalog_service #139DCF
+
+checkout_service =[#black]=> product_catalog_service
+shipping_service -[#black]-> quote_service
+recommendation_service =[#black]=> product_catalog_service
+
+' layer 4
+database "\nCache" as cache_redis
+
+cart_service =[#black]=> cache_redis
+
+rectangle "\nFeature Flag Service" as feature_flag_service #A72086;text:white
+
+shipping_service =[#black]=> feature_flag_service
+product_catalog_service =[#black]=> feature_flag_service
+frontend_proxy =[#black]==> feature_flag_service
+
+database "\nFeature Flag Store\nPostgresSQL DB" as feature_flag_store
+
+feature_flag_service =[#black]=> feature_flag_store
+
+legend
+    |connection | protocol |
+    | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5JGjLFGIDBaSaZDIm4A0G00>| HTTP |
