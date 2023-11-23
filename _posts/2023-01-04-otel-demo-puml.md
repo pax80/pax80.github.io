@@ -6,13 +6,13 @@ categories: [blogging]
 
 # blog Plantuml otel architecture
 
-* [categories: [blogging]](#categories:-[blogging])
-* [intro](#intro)
-  * [[What is Plantuml](https://en.wikipedia.org/wiki/PlantUML)](#[what-is-plantuml](https://en.wikipedia.org/wiki/plantuml))
-  * [How to render](#how-to-render)
-  * [why opentelemetry-demo](#why-opentelemetry-demo)
-* [Build the diagram](#build-the-diagram)
-  * [121 mapping with no layout change](#121-mapping-with-no-layout-change)
+- [categories: [blogging]](#categories:-[blogging])
+- [intro](#intro)
+  - [[What is Plantuml](https://en.wikipedia.org/wiki/PlantUML)](<#[what-is-plantuml](https://en.wikipedia.org/wiki/plantuml)>)
+  - [How to render](#how-to-render)
+  - [why opentelemetry-demo](#why-opentelemetry-demo)
+- [Build the diagram](#build-the-diagram)
+  - [121 mapping with no layout change](#121-mapping-with-no-layout-change)
 
 ## intro
 
@@ -23,7 +23,7 @@ This is to:
 - show application flows
 - explaining ideas
 
-I want to be able to create diagram based on plane text file. This allows me to revision the diagram within codebases or 
+I want to be able to create diagram based on plane text file. This allows me to revision the diagram within codebases or
 other specific git repositories.
 
 ### What is Plantuml
@@ -31,12 +31,11 @@ other specific git repositories.
 > PlantUML is an open-source tool allowing users to create diagrams from a plain text language.
 > Besides various UML diagrams, PlantUML has support for various other software development related formats
 > (such as Archimate, Block diagram, BPMN, C4, Computer network diagram, ERD, Gantt chart, Mind map, and WBD), as well as visualisation of JSON and YAML files.
-> 
+>
 > The language of PlantUML is an example of a domain-specific language.[5] Besides its own DSL,
 > PlantUML also understands AsciiMath, Creole, DOT, and LaTeX. It uses Graphviz software to lay out its diagrams and Tikz for LaTeX support. Images can be output as PNG, SVG, LaTeX and even ASCII art. PlantUML has also been used to allow blind people to design and read UML diagrams.[6][7]
 
-> *[From wikipedia](https://en.wikipedia.org/wiki/PlantUML)*
-
+> _[From wikipedia](https://en.wikipedia.org/wiki/PlantUML)_
 
 [mermaid](https://mermaid.js.org/#/) has the same approach to diagram creation but is using a different DSL.
 
@@ -46,19 +45,19 @@ other specific git repositories.
 
 ### How to render
 
-To render *plantuml* we need to select a server
+To render _plantuml_ we need to select a server
 
-* [spin up plantuml docker server](https://hub.docker.com/r/plantuml/plantuml-server)
-* [use the online server](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
+- [spin up plantuml docker server](https://hub.docker.com/r/plantuml/plantuml-server)
+- [use the online server](https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000)
 
 ### why opentelemetry-demo
-I read and follow **otel** and the repo is public available.
 
+I read and follow **otel** and the repo is public available.
 
 [The architecture](https://opentelemetry.io/docs/demo/architecture/)
 of the demo shows services that made up a **simple** online shop.
 This is a perfect example to show the capability of plantuml and the simplicity on how a diagram can be build
-by using *diagram as code*
+by using _diagram as code_
 
 ## Build the diagram
 
@@ -67,98 +66,94 @@ by using *diagram as code*
 The first step is to create the same amount of boxes we have for the original
 diagram and coloring
 
+```plantuml
+@startuml
+rectangle "\nInternet" as internet
 
+rectangle "\nLoad Generator" as load_generator #3572A5;text:white
+rectangle "\nFront end" as frontend #E07114
+rectangle "\nFrontend Proxy (Envoy)" as frontend_proxy #ED2F6B;text:white
 
-        ```plantuml
+' incoming traffic
+frontend_proxy -[#black]-> frontend
+internet -[#black]-> frontend_proxy
+load_generator -[#black]-> frontend
 
-        @startuml
-        rectangle "\nInternet" as internet
+together {
+    rectangle "\nAd service" as ad_service #9F5F15
+    rectangle "\nFraud Detection Service" as fraud_detection_service #420090;text:white
+    rectangle "\nAccounting SErvice" as accounting_service #139DCF
+    rectangle "\nCheckout Service" as checkout_service #139DCF
+}
 
-        rectangle "\nLoad Generator" as load_generator #3572A5;text:white
-        rectangle "\nFront end" as frontend #E07114
-        rectangle "\nFrontend Proxy (Envoy)" as frontend_proxy #ED2F6B;text:white
+frontend =[#black]=> ad_service
+frontend =[#black]=> checkout_service
 
-        ' incoming traffic
-        frontend_proxy -[#black]-> frontend
-        internet -[#black]-> frontend_proxy
-        load_generator -[#black]-> frontend
+' layer 3
 
-        together {
-            rectangle "\nAd service" as ad_service #9F5F15
-            rectangle "\nFraud Detection Service" as fraud_detection_service #420090;text:white
-            rectangle "\nAccounting SErvice" as accounting_service #139DCF
-            rectangle "\nCheckout Service" as checkout_service #139DCF
-        }
+queue "\nKafka" as kafka #white;line:black
 
-        frontend =[#black]=> ad_service
-        frontend =[#black]=> checkout_service
+fraud_detection_service .[#black].> kafka
+accounting_service .[#black].> kafka
+checkout_service .[#black].> kafka
 
-        ' layer 3
+together {
+    rectangle "\nShipping Service" as shipping_service #D49471
+    rectangle "\nRecommendation Service" as recommendation_service #3572A5;text:white
+}
 
-        queue "\nKafka" as kafka #white;line:black
+frontend =[#black]==> shipping_service
+frontend =[#black]==> recommendation_service
 
-        fraud_detection_service .[#black].> kafka
-        accounting_service .[#black].> kafka
-        checkout_service .[#black].> kafka
+' break
+'
+rectangle "\nCart Service" as cart_service #178600;text:white
 
-        together {
-            rectangle "\nShipping Service" as shipping_service #D49471
-            rectangle "\nRecommendation Service" as recommendation_service #3572A5;text:white
-        }
+frontend ==[#black]==> cart_service
+checkout_service ==[#black]===> cart_service
 
-        frontend =[#black]==> shipping_service
-        frontend =[#black]==> recommendation_service
+together {
+    rectangle "\nCurrency Service" as currency_service #ED2F6B
+    rectangle "\nEmail Service" as email_service #5C0C11;text:white
+    rectangle "\nPayment Service" as payment_service #ECDC49;text:black
+}
 
-        ' break
-        '
-        rectangle "\nCart Service" as cart_service #178600;text:white
+checkout_service ==[#black]=> currency_service
+checkout_service --[#black]-> email_service
+checkout_service =[#black]==> payment_service
 
-        frontend ==[#black]==> cart_service
-        checkout_service ==[#black]===> cart_service
+frontend ==[#black]=> currency_service
 
-        together {
-            rectangle "\nCurrency Service" as currency_service #ED2F6B
-            rectangle "\nEmail Service" as email_service #5C0C11;text:white
-            rectangle "\nPayment Service" as payment_service #ECDC49;text:black
-        }
+rectangle "\nQuote Service" as quote_service #3E4983;text:white
+rectangle "\nProduct_catalog_service" as product_catalog_service #139DCF
 
-        checkout_service ==[#black]=> currency_service
-        checkout_service --[#black]-> email_service
-        checkout_service =[#black]==> payment_service
+checkout_service =[#black]=> product_catalog_service
+shipping_service -[#black]-> quote_service
+recommendation_service =[#black]=> product_catalog_service
 
-        frontend ==[#black]=> currency_service
+' layer 4
+database "\nCache" as cache_redis
 
-        rectangle "\nQuote Service" as quote_service #3E4983;text:white
-        rectangle "\nProduct_catalog_service" as product_catalog_service #139DCF
+cart_service =[#black]=> cache_redis
 
-        checkout_service =[#black]=> product_catalog_service
-        shipping_service -[#black]-> quote_service
-        recommendation_service =[#black]=> product_catalog_service
+rectangle "\nFeature Flag Service" as feature_flag_service #A72086;text:white
 
-        ' layer 4
-        database "\nCache" as cache_redis
+shipping_service =[#black]=> feature_flag_service
+product_catalog_service =[#black]=> feature_flag_service
+frontend_proxy =[#black]==> feature_flag_service
 
-        cart_service =[#black]=> cache_redis
+database "\nFeature Flag Store\nPostgresSQL DB" as feature_flag_store
 
-        rectangle "\nFeature Flag Service" as feature_flag_service #A72086;text:white
+feature_flag_service =[#black]=> feature_flag_store
 
-        shipping_service =[#black]=> feature_flag_service
-        product_catalog_service =[#black]=> feature_flag_service
-        frontend_proxy =[#black]==> feature_flag_service
-
-        database "\nFeature Flag Store\nPostgresSQL DB" as feature_flag_store
-
-        feature_flag_service =[#black]=> feature_flag_store
-
-        legend
-            |connection | protocol |
-            | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5JGjLFGIDBaSaZDIm4A0G00>| HTTP |
-            | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5JGYrPEoYbDZRLJq4ZIv798pKi1oW00>| TCP |
-            | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5ImjLFGIDBaSaZDIm4A0G00>| gRPC |
-        endlegend
-        @enduml
-
-        ```
+legend
+    |connection | protocol |
+    | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5JGjLFGIDBaSaZDIm4A0G00>| HTTP |
+    | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5JGYrPEoYbDZRLJq4ZIv798pKi1oW00>| TCP |
+    | <img:http://www.plantuml.com/plantuml/png/SoWkIImgAStDuT98r5ImjLFGIDBaSaZDIm4A0G00>| gRPC |
+endlegend
+@enduml
+```
 
 ![image](http://www.plantuml.com/plantuml/png/bLPTR-8w47tthx3AbNhlGoi-e9Js5hKDi5fj7zhbSNSL6MU0B2PE7QTjjDh_ldOWuAa3sY8XalauddDcFE8sqqpfV2q88GguPib203tv_v-5a3C8uqI3Ia0FloUVjuydb6MqihzBIWkzb8a9Vf0iefyW0SMqL6MACAPmKPbeezFhj-zwrnhUzDNhCjQ0eNIHGiPLdDgp9qecca8IbKXp-sPUQ6FSxBTQNPp8Kv5dzXkAE87mLQfepTJAebHvZqg-5VJVSV8YY_yGP9XQbm4UjISNzsvnvDIGvd8T9mkg5PlFOqxUPPrzQym4uwiVPyCT8AcKmbwKIB0qzJX4omNe9IZwYr3pGPn_iXTc2Dv5D0Fr4dCeIHdGxIjj32QzIQldPwwaDZALuh0yeYFGnXlBX4uTeBdrXL7bswDssytceEdAv1smaBOmpcMUQAlTTEmKk3Fl8LkTmIYO7C09bi1NCjUeEhurUXY_oQv3zARIz6Rew5Bhzm1jxmKhGD4E8Syvv1lbs7nbHVzYVyj2IWjjb49Ss-6xAY49EQJVUNNe-N2JJ6eKyOCymdx8qMbHUMOlrNGPfwav2OcPMIDgoAWxwFPR60NTzQ_0vNfjH6JUu2ZascFwTx--LpT3hw3wCE-aVUTc2jYAdE8b4KczsMe1K--cYIbtalgN5qqquCxvg00tp-kG6-i5-xtwgsqMv4f1mWjS_TPOWLURh6u8PeL16QzPB104MCi-lnSqWrRBLQ1s--nMzIChJ1kmfkd6vXGLZ8BkO0DQocBwVrIqeSVC3pzpzoPYuSUYrk7oS8kFLK3mVLYcXlvJBZKWyi_Muep-k3kuxBXw-clkKSaevphaJ3CXpUYxMYAVlpYFSHqUoYRUjNUrH0m8lcaVEcM_IBl4fBCPopQp256SbPUHBwjRQ9x2qcuOCLNF1aKX6K49ysmW9y1qhe1E1CEBRhvnX7F1717l-ktcvONR7KyQL44T2i7qFv28_nOuyOSIa8gfpFH2GVOiFDvQAZ1ZjGsOFZtGqNsD2ZQC46ohhzrB8hUcxdmj_W00)
 
@@ -173,7 +168,7 @@ together {
 
 ```
 
-![together](togetherpng.png)
+![together](/assets/img/together.png)
 
 - change of line
 
@@ -299,9 +294,9 @@ Plantuml has a standard library containing icons for all the devices.
 To add an icon:
 
 - import with the include statement
-    `!include <logo/nginx>`
+  `!include <logo/nginx>`
 - use on the diagram
-    `rectangle "<$nginx>" as nginx_app`
+  `rectangle "<$nginx>" as nginx_app`
 
 ```plantuml
 !include <logo/nginx>
@@ -310,7 +305,9 @@ rectangle "<$nginx>" as nginx_app
 
 ![nginx example](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuUBYKipCIyufJKbLiCd9JyylrizBpyohiEDAJ2x9Br8eBKujuYfAJIv9p4lFILLGib61I2if91OhW9bSN20r2hgwTZ2-GsfU2j1e0000)
 
-![with Icons](https://github.com/pax80/pax80.github.io/blob/master/_img/otel.svg)
+[Code](/assets/diagrams/otel.puml)
+
+![with Icons](/assets/img/otel.svg)
 
 ### layout tips
 
@@ -318,7 +315,7 @@ Inline layout is starting with `#`
 
 Hex will define the color of the inside shape
 separated by `;`
-***text***:color
+**_text_**:color
 
 ```bash
 rectangle "<$kotlin>\nFraud Detection Service" as fraud_detection_service #420090;text:white
