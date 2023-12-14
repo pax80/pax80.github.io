@@ -1,0 +1,62 @@
+@startuml
+skinparam node {
+ borderColor Blue
+ backgroundColor LightCyan
+ backgroundColor<<shared node>> Magenta
+}
+skinparam rectangle {
+    BackgroundColor<<dc>> D5E9D5
+    BackgroundColor<<vm>> DCEAFE
+    BackgroundColor AntiqueWhite
+    BackgroundColor<<dev>> LightGreen
+    BackgroundColor<<prod>> #D46A6A
+}
+skinparam storage {
+  backgroundColor DAE8FC
+}
+skinparam component{
+    BackgroundColor WhiteSmoke
+    BackgroundColor<<shared>> APPLICATION
+    borderColor black
+}
+title Troubleshooting session
+left to right direction
+actor user
+rectangle DC_1 <<dc>> {
+  rectangle machine_1 <<ph>>{
+    storage machine_1_nginx {
+      [service_1]->(api_1)
+      [service_1]->(api_2)
+    }
+    frame machine_1_address <<ip>> {
+      rectangle 10.0.0.1
+    }
+  }
+}
+rectangle DC_2 <<dc>> {
+  rectangle machine_3 <<vm>>{
+    storage machine_3_nginx #WhiteSmoke {
+    ' storage nginx {
+      [machine_3_spa]
+      [machine_3_domain_dev]
+    }
+    frame machine_3_addr <<ip>> {
+      rectangle 10.0.0.2
+      rectangle 10.0.2.1
+    }
+  }
+   rectangle machine_2 {
+    storage machine_2_nginx {
+      [machine_2_domain]
+    }
+    frame machine_2_address <<ip>> {
+      rectangle 10.0.0.3
+    }
+  }
+}
+user ==> machine_2_domain: issues
+user ..> [machine_3_domain_dev]
+[machine_3_domain_dev] ..> service_1
+machine_2_domain ==> service_1: issues
+@enduml
+

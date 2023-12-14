@@ -156,7 +156,6 @@ rectangle DC_2 <<dc>> {
 {% endhighlight %}
 </details>
 
-![tshoot](/assets/images/puml_base.png)
 We would like to check that all the ip related to the API can access the DB ip
 
 ```bash
@@ -202,8 +201,6 @@ rectangle DC_2 <<dc>> {
 @enduml
 {% endhighlight %}
 </details>
-
-![tshoot](/assets/images/puml_base_conn.png)
 
 ## Result
 
