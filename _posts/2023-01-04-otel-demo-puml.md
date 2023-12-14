@@ -2,6 +2,7 @@
 layout: post
 title: plantuml otel architecture
 categories: [blogging]
+tags:       plantuml diagram
 ---
 
 # blog Plantuml otel architecture

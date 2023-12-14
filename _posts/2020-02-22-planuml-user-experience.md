@@ -2,6 +2,7 @@
 layout: post
 title: Plant UML user experience
 categories: [blogging]
+tags:       plantuml diagram
 ---
 
 > if i have seen further then others, it is by standing upon the shoulders of giants
