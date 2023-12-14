@@ -1,18 +1,30 @@
-title: "M.P."
-#mailto: mirco.paccusse@gmail.com 
-github_username: pax80
-email: mirco.paccusse@gmail.com
-description: >- # this means to ignore newlines until "baseurl:"
-  🚀 curious / nvim / otel / software engineering
-#baseurl: "" # the subpath of your site, e.g. /blog
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  #  - jekyll-remote-theme
 
+
+email: mirco.paccusse@gmail.com
+description: >-
+  🚀 curious / nvim / otel / software engineering
+baseurl: /
 url: "https://pax80.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-#github_username:  pax80
-#
-# Build settings
+
+google_analytics: G-9WQLX34DJH
+
+show_excerpts: true
+excerpt_separator: <!--more-->
 theme: minima
 minima:
   skin: solarized-light
-plugins:
-  - jekyll-feed
-  #  - jekyll-sitemap
+title: "M.P." 
+header_pages:
+  - tags.md
+  - blog.md
+  - about.md
+
+minima:
+  social_links:
+    - { platform: linkedin, user_url: "https://linkedin.com/in/hatedabamboo/"}
+    - { platform: github,  user_url: "https://github.com/pax80/" }
+    - { platform: twitter, user_url: "https://twitter.com/paccusse80/" }
